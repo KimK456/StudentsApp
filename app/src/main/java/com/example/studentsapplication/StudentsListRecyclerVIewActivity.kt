@@ -30,10 +30,6 @@ class StudentsListRecyclerVIewActivity : AppCompatActivity() {
             insets
         }
 
-        // TODO: 1. Create layout ✅
-        // TODO: 2. Create adapter ✅
-        // TODO: 3. Create ViewHolder ✅
-
         students = Model.shared.students
         val recyclerView: RecyclerView = findViewById(R.id.students_list_activity_recycler_view)
         recyclerView.setHasFixedSize(true)
