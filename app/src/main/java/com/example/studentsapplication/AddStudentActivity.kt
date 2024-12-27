@@ -11,7 +11,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class AddStudentActivity : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -31,7 +30,7 @@ class AddStudentActivity : AppCompatActivity() {
         val savedTextField: TextView = findViewById(R.id.add_student_success_saved_text_view)
 
         saveButton.setOnClickListener {
-            savedTextField.text = "${nameTextField.text} ${idTextField.text} is saved...!!!"
+            savedTextField.text = "${nameTextField.text} ${idTextField.text} ${phoneTextField.text} ${addressTextField.text} is saved !"
         }
 
         cancelButton.setOnClickListener {
