@@ -12,7 +12,8 @@ class Model private constructor() {
             val student = Student(
                 name = "Kim Kurikan $i",
                 id = i.toString(),
-                avatarUrl = "",
+                phone = "05222222",
+                address = "gisin",
                 isChecked = false
             )
 

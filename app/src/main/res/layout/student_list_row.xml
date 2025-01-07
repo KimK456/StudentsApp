@@ -46,7 +46,7 @@
         app:layout_constraintTop_toBottomOf="@+id/students_row_name_text_view" />
 
     <CheckBox
-        android:id="@+id/students_row_checkbox"
+        android:id="@+id/student_row_check_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
