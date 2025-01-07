@@ -1,10 +1,8 @@
 package com.example.studentsapplication
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +20,7 @@ interface OnItemClickListener {
 }
 
 class StudentsListRecyclerVIewActivity : AppCompatActivity() {
+
     private var students: MutableList<Student>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,16 +48,21 @@ class StudentsListRecyclerVIewActivity : AppCompatActivity() {
             }
 
             override fun onItemClick(student: Student?) {
+
+                val intent = Intent(this@StudentsListRecyclerVIewActivity, StudentDetailsActivity::class.java)
+                intent.putExtra("student_id", student?.id)
+                intent.putExtra("student_name", student?.name)
+                intent.putExtra("student_address", student?.address)
+                intent.putExtra("student_phone", student?.phone)
+                intent.putExtra("student_enabled", student?.isChecked)
+                startActivity(intent)
                 Log.d("TAG", "On student clicked name: ${student?.name}")
             }
         }
 
         recyclerView.adapter = adapter
-
         val addStudentButton: Button = findViewById(R.id.add_student_button)
-
         addStudentButton.setOnClickListener {
-
             val intent = Intent(this, AddStudentActivity::class.java)
             startActivity(intent)
         }
