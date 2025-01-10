@@ -1,18 +1,22 @@
 package com.example.studentsapplication
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.studentsapplication.models.Model
 import com.example.studentsapplication.models.Student
 
 class EditStudentActivity : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -27,7 +31,7 @@ class EditStudentActivity : AppCompatActivity() {
         val name = intent.getStringExtra("student_name")
         val address = intent.getStringExtra("student_address")
         val phone = intent.getStringExtra("student_phone")
-        val enabled = intent.getBooleanExtra("student_enabled", false)
+        val enabled = intent.getBooleanExtra("student_enabled",false)
         val student = Student(
             name = name!!,
             id = id!!,
@@ -43,9 +47,21 @@ class EditStudentActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.edit_students_activity_name_text_view).text = student.name
         findViewById<TextView>(R.id.edit_students_activity_id_text_view).text = student.id
         findViewById<TextView>(R.id.edit_students_activity_phone_text_view).text = student.phone
-        findViewById<CheckBox>(R.id.edit_students_activity_enabled_check_box).isChecked =
-            student.isChecked
+        findViewById<CheckBox>(R.id.edit_students_activity_enabled_check_box).isChecked = student.isChecked
 
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "Edit Students"
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true) // Show the back button
+            setDisplayShowHomeEnabled(true) // Ensure back button is functional
+        }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish() // Or any custom logic for back navigation
+            }
+        })
 
         cancelButton.setOnClickListener {
             val intent = Intent(this, StudentsListRecyclerVIewActivity::class.java)
@@ -56,16 +72,11 @@ class EditStudentActivity : AppCompatActivity() {
         saveButton.setOnClickListener {
             var updatedStudent = Model.shared.students.find { it.id == student.id }
             updatedStudent?.let {
-                it.id =
-                    findViewById<TextView>(R.id.edit_students_activity_id_text_view).text.toString()
-                it.name =
-                    findViewById<TextView>(R.id.edit_students_activity_name_text_view).text.toString()
-                it.address =
-                    findViewById<TextView>(R.id.edit_students_activity_address_text_view).text.toString()
-                it.phone =
-                    findViewById<TextView>(R.id.edit_students_activity_phone_text_view).text.toString()
-                it.isChecked =
-                    findViewById<CheckBox>(R.id.edit_students_activity_enabled_check_box).isChecked
+                it.id = findViewById<TextView>(R.id.edit_students_activity_id_text_view).text.toString()
+                it.name = findViewById<TextView>(R.id.edit_students_activity_name_text_view).text.toString()
+                it.address = findViewById<TextView>(R.id.edit_students_activity_address_text_view).text.toString()
+                it.phone = findViewById<TextView>(R.id.edit_students_activity_phone_text_view).text.toString()
+                it.isChecked = findViewById<CheckBox>(R.id.edit_students_activity_enabled_check_box).isChecked
             }
             val intent = Intent(this, StudentsListRecyclerVIewActivity::class.java)
             startActivity(intent)
@@ -79,6 +90,10 @@ class EditStudentActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
 
+    override fun onSupportNavigateUp(): Boolean {
+        finish() // Or navigate back as needed
+        return true
     }
 }

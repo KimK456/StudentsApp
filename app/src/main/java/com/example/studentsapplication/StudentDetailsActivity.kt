@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -40,7 +42,19 @@ class StudentDetailsActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.students_details_activity_id_text_view).text = student.id
         findViewById<TextView>(R.id.students_details_activity_phone_text_view).text = student.phone
         findViewById<CheckBox>(R.id.students_details_activity_enabled_check_box).isChecked = student.isChecked
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "Students Details"
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true) // Show the back button
+            setDisplayShowHomeEnabled(true) // Ensure back button is functional
+        }
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish() // Or any custom logic for back navigation
+            }
+        })
 
         val editButton: Button = findViewById(R.id.students_details_activity_edit_button)
         editButton.setOnClickListener {
@@ -53,5 +67,10 @@ class StudentDetailsActivity : AppCompatActivity() {
             startActivity(intent)
             Log.d("TAG", "On student clicked name: ${student?.name} open edit activity")
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish() // Or navigate back as needed
+        return true
     }
 }

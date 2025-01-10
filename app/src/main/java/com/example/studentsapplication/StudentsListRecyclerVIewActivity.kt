@@ -1,11 +1,19 @@
 package com.example.studentsapplication
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
+import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +31,7 @@ class StudentsListRecyclerVIewActivity : AppCompatActivity() {
 
     private var students: MutableList<Student>? = null
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,7 +43,7 @@ class StudentsListRecyclerVIewActivity : AppCompatActivity() {
         }
 
         students = Model.shared.students
-        val recyclerView: RecyclerView = findViewById(R.id.students_list_activity_recycler_view)
+        val recyclerView: RecyclerView = findViewById(R.id.students_recycler_view)
         recyclerView.setHasFixedSize(true)
 
         val layoutManager = LinearLayoutManager(this)
@@ -61,10 +70,87 @@ class StudentsListRecyclerVIewActivity : AppCompatActivity() {
         }
 
         recyclerView.adapter = adapter
-        val addStudentButton: Button = findViewById(R.id.add_student_button)
+        val addStudentButton: Button = findViewById(R.id.students_recycler_view_activity_add_student_button)
         addStudentButton.setOnClickListener {
             val intent = Intent(this, AddStudentActivity::class.java)
             startActivity(intent)
+        }
+
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "Students List"
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true) // Show the back button
+            setDisplayShowHomeEnabled(true) // Ensure back button is functional
+        }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish() // Or any custom logic for back navigation
+            }
+        })
+
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish() // Or navigate back as needed
+        return true
+    }
+
+    class StudentViewHolder(
+        itemView: View,
+        listener: OnItemClickListener?
+    ): RecyclerView.ViewHolder(itemView) {
+
+        private var nameTextView: TextView? = null
+        private var idTextView: TextView? = null
+        private var checkBox: CheckBox? = null
+        private var student: Student? = null
+
+        init {
+            nameTextView = itemView.findViewById(R.id.students_row_name_text_view)
+            idTextView = itemView.findViewById(R.id.students_row_id_text_view)
+            checkBox = itemView.findViewById(R.id.student_row_check_box)
+
+            checkBox?.apply {
+                setOnClickListener { view ->
+                    (tag as? Int)?.let { tag ->
+                        student?.isChecked = (view as? CheckBox)?.isChecked ?: false
+                    }
+                }
+            }
+
+            itemView.setOnClickListener {
+                listener?.onItemClick(adapterPosition)
+                listener?.onItemClick(student)
+            }
+        }
+
+        fun bind(student: Student?, position: Int) {
+            this.student = student
+            nameTextView?.text = student?.name
+            idTextView?.text = student?.id
+            checkBox?.apply {
+                isChecked = student?.isChecked ?: false
+                tag = position
+            }
+        }
+    }
+
+    class StudentsRecyclerAdapter(private val students: List<Student>?): RecyclerView.Adapter<StudentViewHolder>() {
+
+        var listener: OnItemClickListener? = null
+
+        override fun getItemCount(): Int = students?.size ?: 0
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
+            val inflation = LayoutInflater.from(parent.context)
+            val view = inflation.inflate(R.layout.student_list_row, parent, false)
+            return StudentViewHolder(view, listener)
+        }
+
+        override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
+            holder.bind(students?.get(position), position)
         }
     }
 }

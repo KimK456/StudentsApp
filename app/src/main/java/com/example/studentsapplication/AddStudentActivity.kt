@@ -1,16 +1,23 @@
 package com.example.studentsapplication
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.studentsapplication.models.Model
+import com.example.studentsapplication.models.Student
 
 class AddStudentActivity : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -21,20 +28,50 @@ class AddStudentActivity : AppCompatActivity() {
             insets
         }
 
-        val saveButton: Button = findViewById(R.id.add_student_save_button)
-        val cancelButton: Button = findViewById(R.id.add_student_cancel_button)
-        val nameTextField: EditText = findViewById(R.id.add_student_name_text_field)
-        val idTextField: EditText = findViewById(R.id.add_student_id_text_field)
-        val phoneTextField: EditText = findViewById(R.id.add_student_phone_text_field)
-        val addressTextField: EditText = findViewById(R.id.add_student_address_text_field)
-        val savedTextField: TextView = findViewById(R.id.add_student_success_saved_text_view)
+        val saveButton: Button = findViewById(R.id.add_student_activity_save_button)
+        val cancelButton: Button = findViewById(R.id.students_details_activity_edit_button)
 
-        saveButton.setOnClickListener {
-            savedTextField.text = "${nameTextField.text} ${idTextField.text} ${phoneTextField.text} ${addressTextField.text} is saved !"
+        val nameEditText: EditText = findViewById(R.id.add_student_activity_name_edit_text)
+        val idEditText: EditText = findViewById(R.id.add_student_activity_id_edit_text)
+        val phoneEditText: EditText = findViewById(R.id.add_student_activity_phone_edit_text)
+        val addressEditText: EditText = findViewById(R.id.add_student_activity_address_edit_text)
+        val enabledCheckBox: CheckBox = findViewById(R.id.add_student_activity_enabled_check_box)
+
+        val savedMessageTextView: TextView = findViewById(R.id.add_student_activity_save_message_text_view)
+
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "New Students"
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true) // Show the back button
+            setDisplayShowHomeEnabled(true) // Ensure back button is functional
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        })
 
         cancelButton.setOnClickListener {
+            val intent = Intent(this, StudentsListRecyclerVIewActivity::class.java)
+            startActivity(intent)
             finish()
         }
+
+        saveButton.setOnClickListener {
+            val student = Student(nameEditText.text.toString(), idEditText.text.toString(),phoneEditText.text.toString(),addressEditText.text.toString(),enabledCheckBox.isChecked )
+            Model.shared.students.add(student)
+            savedMessageTextView.text = "Name: ${nameEditText.text} ID: ${idEditText.text} is saved!!!..."
+            val intent = Intent(this, StudentsListRecyclerVIewActivity::class.java)
+            startActivity(intent)
+            finish()
+
+        }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish() // Or navigate back as needed
+        return true
     }
 }
